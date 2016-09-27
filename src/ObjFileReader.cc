@@ -79,7 +79,7 @@ errno_t ObjFileReader::composeShape (std::ofstream &ofs, Dp::Shape &shape) {
 std::shared_ptr<Dp::Shape> ObjFileReader::ReadShape (std::string filepath) {
   std::ifstream ifs(dirpath_ + filepath);
   if (!ifs.good()) {
-    std::cout << "error shape file :" << dirpath_ << "|" << filepath << "\n";
+    std::cout << "error read shape file :" << dirpath_ << "|" << filepath << "\n";
     return NULL;
   }
 
@@ -95,7 +95,7 @@ errno_t ObjFileReader::ExportShapeFile (std::string &filepath, Dp::Shape &shape)
   std::ofstream ofs(path);
   std::cout << "export shape :" << dirpath_ + filepath << "\n";
   if (!ofs.good()) {
-    std::cout << "error link:" << dirpath_ << "|" << filepath << "\n";
+    std::cout << "error export shape:" << dirpath_ << "|" << filepath << "\n";
     return EINVAL;
   }
 
@@ -161,7 +161,7 @@ errno_t ObjFileReader::composeObjectAttribute (std::ofstream &ofs, Object &obj) 
 std::shared_ptr<Link> ObjFileReader::ImportLinkFile (std::string &filepath) {
   std::ifstream ifs(dirpath_ + filepath);
   if (!ifs.good()) {
-    std::cout << "error link:" << dirpath_ << "|" << filepath << "\n";
+    std::cout << "error import link:" << dirpath_ << "|" << filepath << "\n";
     return NULL;
   }
 
@@ -207,7 +207,7 @@ errno_t ObjFileReader::ExportLinkFile (Link &link) {
   std::ofstream ofs(path);
   std::cout << "export Link : " << dirpath_ + link.GetFilePath() << "\n";
   if (!ofs.good()) {
-    std::cout << "error link:" << dirpath_ << "|" << link.GetFilePath() << "\n";
+    std::cout << "error export Link:" << dirpath_ << "|" << link.GetFilePath() << "\n";
     return EINVAL;
   }
 
@@ -225,7 +225,7 @@ std::shared_ptr<Object> ObjFileReader::ImportObjFile(std::string &dirpath, std::
   dirpath_ = dirpath;
   std::ifstream ifs(dirpath_ + filepath);
   if (!ifs.good()) {
-    std::cout << "error link :" << dirpath_ << "|" << filepath << "\n";
+    std::cout << "error import obj :" << dirpath_ << "|" << filepath << "\n";
     return NULL;
   }
 
@@ -282,7 +282,7 @@ errno_t ObjFileReader::ExportObjectFile (Object &obj) {
   std::ofstream ofs(path);
   std::cout << "export obj : " << dirpath_ + obj.GetFilePath() << "\n";
   if (!ofs.good()) {
-    std::cout << "error obj:" << dirpath_ << "|" << obj.GetFilePath() << "\n";
+    std::cout << "error export obj:" << dirpath_ << "|" << obj.GetFilePath() << "\n";
     return EINVAL;
   }
 

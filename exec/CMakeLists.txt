@@ -9,23 +9,25 @@ project(p4model_cmd)
 #set(CMAKE_CXX_COMPILER g++)
 #endif()
 
-add_definitions(-std=gnu99 -Wall -O2 -g)
-
 include_directories(
   ${mfoundation_SOURCE_DIR}/h/mfoundation
   ${p4model_SOURCE_DIR}/h/p4model
 )
 
+if(${XENOMAI})
+  list(APPEND DEPENDENCIES ${XENO_DEPENDENCIES})
+endif()
+
 #link_libraries(p4model)
 
 file(GLOB SRCS "${PROJECT_SOURCE_DIR}/p4model_chg.c")
 add_executable(p4model_chg ${SRCS})
-target_link_libraries(p4model_chg p4model)
+target_link_libraries(p4model_chg p4model ${DEPENDENCIES})
 #add_dependencies(p4model_chg p4model)
 
 file(GLOB SRCS "${PROJECT_SOURCE_DIR}/p4model_add_sensor.c")
 add_executable(p4model_add_sensor ${SRCS})
-target_link_libraries(p4model_add_sensor p4model)
+target_link_libraries(p4model_add_sensor p4model ${DEPENDENCIES})
 
 if(${UNIX})
     install(TARGETS p4model_chg p4model_add_sensor RUNTIME DESTINATION bin)

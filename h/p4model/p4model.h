@@ -16,6 +16,15 @@ typedef enum {
   P4ARM_MAX    = 2
 } P4ARM_LENGTH;
 
+static inline const char* p4arm_length2str (P4ARM_LENGTH length) {
+  switch (length) {
+    case P4ARM_SHORT:  return "short";
+    case P4ARM_MIDDLE: return "middle";
+    case P4ARM_LONG:   return "long";
+    default:           return "ivalid";
+  }
+}
+
 errno_t p4model_open (void** inst, const char* resdir, const char* filepath);
 errno_t p4model_close (void* inst);
 
