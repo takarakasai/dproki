@@ -69,4 +69,18 @@ p4model_add_sensor <res_dirpath> <filepath> <save_dirpath> linkname Camera name 
   name        : センサの名前
   width height vang hang near far x y z r p y  : センサのパラメータ(objファイル形式に準拠)
 
+### Reasenote
+
+--- 2016/09/30 
+branch: develop
+commit: 1d5aeba63d95fb0642ba9c79ce8d43924ea066f4
+comment:
+
+以下コミットの直視鏡モデルに対応
+
+commit 5c6b6fcce75fcd7584c8156b64d5822c69e2bd80
+Author: Yasuhiro Matsuda <Yasuhiro.Matsuda@jp.sony.com>
+Date:   Thu Sep 29 18:13:26 2016 +0900
+
+    update P4ARM_ENDO_STRAIGHT (2016.09 masspro)
 
