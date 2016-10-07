@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
     }
 
     double rot_value = strtod(argv[5], NULL);
-    if (rot_value == 0) {
+    if (rot_value < -180 || 180 < rot_value) {
       fprintf(stderr, " -- invalid rot_value : %lf[deg]\n", rot_value);
       goto ERROR;
     }
