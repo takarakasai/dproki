@@ -21,11 +21,6 @@
 
 #include "ObjFileReader.h"
 
-/* common */
-namespace obj {
-  static std::string dirpath_;
-}
-
 /* link classes for obj format */
 namespace obj {
   const Eigen::Vector3d& parseRotaryAxis (std::string &axis_type);

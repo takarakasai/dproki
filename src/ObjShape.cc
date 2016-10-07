@@ -191,7 +191,7 @@ namespace obj {
 #endif
 
       /* TODO: LTipRot, TipPos */
-      std::string path = dirpath_ + file;
+      std::string path = file;
       auto clink = ObjFileReader::ImportLinkFile(path);
       if (!clink) {
         return -1;

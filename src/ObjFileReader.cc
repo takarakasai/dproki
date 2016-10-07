@@ -5,11 +5,10 @@
 
 #include "dprint.h"
 
-std::string ObjFileReader::dirpath_;
-
 //#include <sys/types.h>
 #include <sys/stat.h>
 
+#include "Common.h"
 #include "ObjSensor.h"
 
 static errno_t my_mkdir (std::string path) {
@@ -79,9 +78,9 @@ errno_t ObjFileReader::composeShape (std::ofstream &ofs, Dp::Shape &shape) {
 }
 
 std::shared_ptr<Dp::Shape> ObjFileReader::ReadShape (std::string filepath) {
-  std::ifstream ifs(dirpath_ + filepath);
+  std::ifstream ifs(Common::DirPath() + filepath);
   if (!ifs.good()) {
-    std::cout << "error read shape file :" << dirpath_ << "|" << filepath << "\n";
+    std::cout << "error read shape file :" << Common::DirPath() << "|" << filepath << "\n";
     return NULL;
   }
 
@@ -92,12 +91,12 @@ std::shared_ptr<Dp::Shape> ObjFileReader::ReadShape (std::string filepath) {
 }
 
 errno_t ObjFileReader::ExportShapeFile (std::string &filepath, Dp::Shape &shape) {
-  std::string path(dirpath_ + filepath);
+  std::string path(Common::DirPath() + Common::OutPathHead() + filepath);
   ECALL(prepare_directory(path));
   std::ofstream ofs(path);
-  std::cout << "export shape :" << dirpath_ + filepath << "\n";
+  std::cout << "export shape :" << path << "\n";
   if (!ofs.good()) {
-    std::cout << "error export shape:" << dirpath_ << "|" << filepath << "\n";
+    std::cout << "error export shape:" << Common::DirPath() << "|" << Common::OutPathHead() << "|" << filepath << "\n";
     return EINVAL;
   }
 
@@ -106,8 +105,8 @@ errno_t ObjFileReader::ExportShapeFile (std::string &filepath, Dp::Shape &shape)
 
 errno_t ObjFileReader::composeLinkAttribute (std::ofstream &ofs, Link &link) {
   ofs << obj::RotaryAxis2Str(link.GetJoint().GetType()) << " " << link.GetName() << std::endl;
-  ofs << "Shape" << " " << link.GetShapePath() << std::endl;
-  ofs << "Hull"  << " " << link.GetHullPath()  << std::endl;
+  ofs << "Shape" << " " << Common::OutPathHead() + link.GetShapePath() << std::endl;
+  ofs << "Hull"  << " " << Common::OutPathHead() + link.GetHullPath()  << std::endl;
   ofs << "Inertia" << std::endl;
   ofs << "     "   << link.GetMass()                 << std::endl;
   ofs << "     "   << link.GetCentroid().transpose() << std::endl;
@@ -126,7 +125,7 @@ errno_t ObjFileReader::composeLinkAttribute (std::ofstream &ofs, Link &link) {
 
   auto clinks = link.GetChilds();
   for (auto &clink : clinks) {
-      ofs << "Child" << " " << clink->GetFilePath() << " "
+      ofs << "Child" << " " << Common::OutPathHead() + clink->GetFilePath() << " "
                             << clink->LTipPos()(0)  << " " 
                             << clink->LTipPos()(1)  << " " 
                             << clink->LTipPos()(2)  << " " 
@@ -146,7 +145,7 @@ errno_t ObjFileReader::composeLinkAttribute (std::ofstream &ofs, Link &link) {
 
 errno_t ObjFileReader::composeObjectAttribute (std::ofstream &ofs, Object &obj) {
   ofs << obj.GetName() << std::endl;
-  ofs << obj.RootLink()->GetFilePath() << std::endl;
+  ofs << Common::OutPathHead() + obj.RootLink()->GetFilePath() << std::endl;
   ofs << std::endl;
 
   PRINTF("%zd\n", obj.NumOfLinks());
@@ -161,9 +160,9 @@ errno_t ObjFileReader::composeObjectAttribute (std::ofstream &ofs, Object &obj) 
 }
  
 std::shared_ptr<Link> ObjFileReader::ImportLinkFile (std::string &filepath) {
-  std::ifstream ifs(dirpath_ + filepath);
+  std::ifstream ifs(Common::DirPath() + filepath);
   if (!ifs.good()) {
-    std::cout << "error import link:" << dirpath_ << "|" << filepath << "\n";
+    std::cout << "error import link:" << Common::DirPath() << "|" << filepath << "\n";
     return NULL;
   }
 
@@ -194,7 +193,7 @@ std::shared_ptr<Link> ObjFileReader::ImportLinkFile (std::string &filepath) {
     if (ifs.eof()) break;
 
 #if defined(DP_DEBUG)
-    std::cout << "--: " << dirpath_ << "|" << filepath << "  ---:" << str << ":" << ifs.eof() << ":" << std::endl;
+    std::cout << "--: " << Common::DirPath() << "|" << filepath << "  ---:" << str << ":" << ifs.eof() << ":" << std::endl;
 #endif
     if (obj::parseLinkAttribute(str, ifs, *link) != 0) {
       return nullptr;
@@ -205,12 +204,12 @@ std::shared_ptr<Link> ObjFileReader::ImportLinkFile (std::string &filepath) {
 }
 
 errno_t ObjFileReader::ExportLinkFile (Link &link) {
-  std::string path(dirpath_ + link.GetFilePath());
+  std::string path(Common::DirPath() + Common::OutPathHead() + link.GetFilePath());
   ECALL(prepare_directory(path));
   std::ofstream ofs(path);
-  std::cout << "export Link : " << dirpath_ + link.GetFilePath() << "\n";
+  std::cout << "export Link : " << path << "\n";
   if (!ofs.good()) {
-    std::cout << "error export Link:" << dirpath_ << "|" << link.GetFilePath() << "\n";
+    std::cout << "error export Link:" << Common::DirPath() << "|" << Common::OutPathHead() << "|" << link.GetFilePath() << "\n";
     return EINVAL;
   }
 
@@ -225,10 +224,10 @@ errno_t ObjFileReader::ExportLinkFile (std::string &filepath, Link &link) {
 /* TODO: Link --> Object */
 //std::shared_ptr<Link> ImportObjFile(std::string &dirpath, std::string &filepath) {
 std::shared_ptr<Object> ObjFileReader::ImportObjFile(std::string &dirpath, std::string &filepath) {
-  dirpath_ = dirpath;
-  std::ifstream ifs(dirpath_ + filepath);
+  Common::DirPath() = dirpath;
+  std::ifstream ifs(Common::DirPath() + filepath);
   if (!ifs.good()) {
-    std::cout << "error import obj :" << dirpath_ << "|" << filepath << "\n";
+    std::cout << "error import obj :" << Common::DirPath() << "|" << filepath << "\n";
     return NULL;
   }
 
@@ -280,12 +279,12 @@ std::shared_ptr<Object> ObjFileReader::ImportObjFile(std::string &dirpath, std::
 }
 
 errno_t ObjFileReader::ExportObjectFile (Object &obj) {
-  std::string path(dirpath_ + obj.GetFilePath());
+  std::string path(Common::DirPath() + Common::OutPathHead() + obj.GetFilePath());
   ECALL(prepare_directory(path));
   std::ofstream ofs(path);
-  std::cout << "export obj : " << dirpath_ + obj.GetFilePath() << "\n";
+  std::cout << "export obj : " << path << "\n";
   if (!ofs.good()) {
-    std::cout << "error export obj:" << dirpath_ << "|" << obj.GetFilePath() << "\n";
+    std::cout << "error export obj:" << Common::DirPath() << "|" << Common::OutPathHead() << "|" << obj.GetFilePath() << "\n";
     return EINVAL;
   }
 
@@ -311,7 +310,15 @@ errno_t ObjFileReader::Export (Object &obj) {
 }
 
 errno_t ObjFileReader::Export(std::string &dirpath, Object &obj) {
-  dirpath_ = dirpath;
+  Common::DirPath() = dirpath;
+  Common::OutPathHead() = "";
+  ECALL(Export(obj));
+  return 0;
+}
+
+errno_t ObjFileReader::Export(std::string &dirpath, std::string &out_path_head, Object &obj) {
+  Common::DirPath() = dirpath;
+  Common::OutPathHead() = out_path_head;
   ECALL(Export(obj));
   return 0;
 }

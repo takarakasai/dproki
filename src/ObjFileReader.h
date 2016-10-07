@@ -18,7 +18,8 @@ class Object;
 
 class ObjFileReader {
 private:
-  static std::string dirpath_;
+  //static std::string dirpath_;
+  //static std::string fpath_header_;
 
 public:
   static const char* Type2str (Dp::SHAPE_TYPE type);
@@ -58,7 +59,10 @@ public:
   static errno_t ExportObjectFile (std::string &filepath, Object &obj);
 
   static errno_t Export (Object &obj);
+  /* save to dirpath | obj.filepath() */
   static errno_t Export (std::string &dirpath, Object &obj);
+  /* save to dirpath | fpath_header + obj.filepath() */
+  static errno_t Export (std::string &dirpath, std::string &fpath_header, Object &obj);
 };
 
 #endif
