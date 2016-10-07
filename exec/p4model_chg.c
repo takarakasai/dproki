@@ -17,11 +17,20 @@ int main(int argc, char *argv[]) {
     //std::string filename = "/obj/p4arm/p4arm.obj";
     const char* dirpath = argv[1];
     const char* filename = argv[2];
-    const char* savepath = argv[3];
+    const char* respath = argv[3];
+    const char* save_filerootpath = NULL;
 
-    if (strcmp(dirpath, savepath) == 0) {
-      fprintf(stderr, " -- res_dirpath and save_dirpath must not be same : save_dirpath:%s.\n", savepath);
-      goto ERROR;
+    if (argc > 6) {
+      save_filerootpath = argv[6];
+      if (strcmp(save_filerootpath, "/") == 0) {
+        fprintf(stderr, " -- res_dirpath and (save_respath + save_filerootpath) must not be same : save_respath:%s.\n", respath);
+        goto ERROR;
+      }
+    } else {
+      if (strcmp(dirpath, respath) == 0) {
+        fprintf(stderr, " -- res_dirpath and save_respath must not be same : save_respath:%s.\n", respath);
+        goto ERROR;
+      }
     }
 
     P4ARM_LENGTH p4arm_len;
@@ -46,10 +55,10 @@ int main(int argc, char *argv[]) {
     EFUNC(p4model_open(&hdl, dirpath, filename));
     EFUNC(p4model_change_model(hdl, p4arm_len, rot_value));
 
-    if (argc > 6) {
-      EFUNC(p4model_saveas2(hdl, savepath, argv[6]));
-    } else { /* argc == 6 */
-      EFUNC(p4model_saveas(hdl, savepath));
+    if (save_filerootpath) {
+      EFUNC(p4model_saveas2(hdl, respath, save_filerootpath));
+    } else {
+      EFUNC(p4model_saveas(hdl, respath));
     }
 
     EFUNC(p4model_close(hdl));
@@ -57,7 +66,7 @@ int main(int argc, char *argv[]) {
     return 0;
  
 ERROR:
-    fprintf(stdout, "%s <res_dirpath> <filepath> <save_dirpath> <S|M|L> <rot_value[deg] [save_filerootpath]>\n", argv[0]);
+    fprintf(stdout, "%s <res_dirpath> <filepath> <save_respath> <S|M|L> <rot_value[deg] [save_filerootpath]>\n", argv[0]);
 
     return 1;
 }
