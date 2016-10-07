@@ -193,14 +193,28 @@ errno_t p4model_add_camera (void* inst, const char* lnk_name, camera_sensor *cam
   return EOK;
 }
 
-errno_t p4model_saveas (void* inst, const char* filepath) {
+errno_t p4model_saveas (void* inst, const char* respath) {
   EINVAL_CHECK(NULL, inst);
-  EINVAL_CHECK(NULL, filepath);
+  EINVAL_CHECK(NULL, respath);
 
-  std::string dir = filepath;
+  std::string dir = respath;
   std::shared_ptr<Object> pobj = ((objdata*)inst)->obj;
 
   EFUNC(ObjFileReader::Export(dir, *pobj));
+
+  return EOK;
+}
+
+errno_t p4model_saveas2 (void* inst, const char* respath, const char* fileroot) {
+  EINVAL_CHECK(NULL, inst);
+  EINVAL_CHECK(NULL, respath);
+  EINVAL_CHECK(NULL, fileroot);
+
+  std::string resdir = respath;
+  std::string filedir = fileroot;
+  std::shared_ptr<Object> pobj = ((objdata*)inst)->obj;
+
+  EFUNC(ObjFileReader::Export(resdir, filedir, *pobj));
 
   return EOK;
 }

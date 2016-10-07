@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <functional>
 
+#include "Common.h"
 #include "ObjSensor.h"
 #include "ObjFileReader.h"
 
@@ -325,7 +326,7 @@ errno_t obj::Stl::parse (std::ifstream &ifs) {
 
 errno_t obj::Stl::compose   (std::ofstream &ofs) {
 
-  ofs << filename_ << std::endl;
+  ofs << Common::OutPathHead() << filename_ << std::endl;
 
   ECALL(composeShapeAttributes(*this, ofs));
 
@@ -396,7 +397,7 @@ errno_t obj::Compound::compose   (std::ofstream &ofs) {
 
   for (auto compound : compounds_) {
     ofs << "  ";
-    ofs << compound.filepath << " ";
+    ofs << Common::OutPathHead() << compound.filepath << " ";
     ofs << compound.shape->GetOffsetXyz()(0) << " "
         << compound.shape->GetOffsetXyz()(1) << " "
         << compound.shape->GetOffsetXyz()(2) << " ";

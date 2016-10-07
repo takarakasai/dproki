@@ -29,7 +29,8 @@ errno_t p4model_open (void** inst, const char* resdir, const char* filepath);
 errno_t p4model_close (void* inst);
 
 errno_t p4model_change_model(void* inst, P4ARM_LENGTH length, double wrist_pitch_value/*[deg]*/);
-errno_t p4model_saveas (void* inst, const char* filepath);
+errno_t p4model_saveas (void* inst, const char* respath);
+errno_t p4model_saveas2 (void* inst, const char* respath, const char* fileroot);
 
 typedef struct {
   const char* name;
