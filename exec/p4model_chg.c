@@ -45,13 +45,19 @@ int main(int argc, char *argv[]) {
     void* hdl;
     EFUNC(p4model_open(&hdl, dirpath, filename));
     EFUNC(p4model_change_model(hdl, p4arm_len, rot_value));
-    EFUNC(p4model_saveas(hdl, savepath));
+
+    if (argc > 6) {
+      EFUNC(p4model_saveas2(hdl, savepath, argv[6]));
+    } else { /* argc == 6 */
+      EFUNC(p4model_saveas(hdl, savepath));
+    }
+
     EFUNC(p4model_close(hdl));
 
     return 0;
  
 ERROR:
-    fprintf(stdout, "%s <res_dirpath> <filepath> <save_dirpath> <S|M|L> <rot_value[deg]>\n", argv[0]);
+    fprintf(stdout, "%s <res_dirpath> <filepath> <save_dirpath> <S|M|L> <rot_value[deg] [save_filerootpath]>\n", argv[0]);
 
     return 1;
 }
