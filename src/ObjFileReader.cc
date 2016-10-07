@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+#include "dprint.h"
+
 std::string ObjFileReader::dirpath_;
 
 //#include <sys/types.h>
@@ -12,14 +14,14 @@ std::string ObjFileReader::dirpath_;
 
 static errno_t my_mkdir (std::string path) {
   errno_t eno = mkdir(path.c_str(), S_IREAD|S_IWRITE|0755);
-  //printf("====== %s %d %d\n", path.c_str(), eno, errno);
+  //PRINTF("====== %s %d %d\n", path.c_str(), eno, errno);
   return (eno == 0 || errno == EEXIST) ? 0 : errno;
 }
 
 static errno_t prepare_directory (std::string filepath) {
   for (size_t i = 1; i < filepath.size(); i++) {
     if (filepath.c_str()[i] == '/') {
-      //printf("====== %s %d\n", filepath.c_str(), i);
+      //PRINTF("====== %s %d\n", filepath.c_str(), i);
       ECALL(my_mkdir(filepath.substr(0, i)));
     }
   }
@@ -147,7 +149,7 @@ errno_t ObjFileReader::composeObjectAttribute (std::ofstream &ofs, Object &obj) 
   ofs << obj.RootLink()->GetFilePath() << std::endl;
   ofs << std::endl;
 
-  printf("%zd\n", obj.NumOfLinks());
+  PRINTF("%zd\n", obj.NumOfLinks());
   for (size_t i = 0; i < obj.NumOfLinks(); i++) {
     Dp::Math::real ovalue = obj.GetLink(i).GetJoint().GetOffsetValue()(0);
     if (Dp::Math::NotZero(ovalue)) {
@@ -189,10 +191,11 @@ std::shared_ptr<Link> ObjFileReader::ImportLinkFile (std::string &filepath) {
   {
     std::string str;
     ifs >> str;
-    std::cout << "===: " << str << std::endl;
     if (ifs.eof()) break;
 
+#if defined(DP_DEBUG)
     std::cout << "--: " << dirpath_ << "|" << filepath << "  ---:" << str << ":" << ifs.eof() << ":" << std::endl;
+#endif
     if (obj::parseLinkAttribute(str, ifs, *link) != 0) {
       return nullptr;
     }
@@ -234,8 +237,8 @@ std::shared_ptr<Object> ObjFileReader::ImportObjFile(std::string &dirpath, std::
   std::string root_file;
   std::getline(ifs, obj_name);
   std::getline(ifs, root_file);
-  printf("OBJ NAME: %s\n", obj_name.c_str());
-  printf("ROOT FILE NAME: %s\n", root_file.c_str());
+  PRINTF("OBJ NAME: %s\n", obj_name.c_str());
+  PRINTF("ROOT FILE NAME: %s\n", root_file.c_str());
   /*               file.name --> "" */
   /*              /file.name --> "/" */
   /* hoge/fuga/aho/file.name --> "hoge/fuga/aho/" */

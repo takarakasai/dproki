@@ -5,6 +5,8 @@
 
 #include "mf_errcheck.h"
 
+#include "dprint.h"
+
 #include "dp_type.h"
 #include "Link.h"
 
@@ -217,7 +219,7 @@ int main(void) {
     robot->Setup();
     robot->UpdateCasCoords();
 
-    printf("--- LINK NUM: %zd\n", robot->NumOfLinks());
+    PRINTF("--- LINK NUM: %zd\n", robot->NumOfLinks());
 
     std::string dir = "./test/";
     ObjFileReader::Export(dir, *robot);

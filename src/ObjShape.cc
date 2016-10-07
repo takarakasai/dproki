@@ -78,6 +78,7 @@ namespace obj {
       //inertia(0, 2) = inertia(2, 0) << ifs;
       link.SetInertia(inertia);
 
+#if defined(DP_DEBUG)
       std::cout << "mass\n";
       std::cout << mass << std::endl;
       std::cout << "centroid\n";
@@ -85,6 +86,7 @@ namespace obj {
       std::cout << "inertia\n";
       std::cout << inertia << std::endl;
       std::cout << "---\n";
+#endif
 
       return 0;
   }
@@ -182,9 +184,11 @@ namespace obj {
       ifs >> rpy(1);
       ifs >> rpy(2);
       
+#if defined(DP_DEBUG)
       std::cout << "Child : " << file
                 << " xyz = " << xyz(0)  << "," << xyz(1) << "," << xyz(2)
                 << " rpy = " << rpy(0)  << "," << rpy(1) << "," << rpy(2) << "\n\n\n";
+#endif
 
       /* TODO: LTipRot, TipPos */
       std::string path = dirpath_ + file;
@@ -244,7 +248,9 @@ namespace obj {
 }
  
 errno_t obj::parseColor (Dp::Shape& shape, std::ifstream &ifs) {
+#if defined(DP_DEBUG)
   std::cout << "  : parse Color\n";
+#endif
 
   Eigen::Vector4d color;
   ifs >> color(0);
@@ -252,7 +258,9 @@ errno_t obj::parseColor (Dp::Shape& shape, std::ifstream &ifs) {
   ifs >> color(2);
   ifs >> color(3);
 
+#if defined(DP_DEBUG)
   std::cout << "  :::" << color << std::endl;
+#endif
 
   //ECALL(shape.SetColor(color));
   (shape.SetColor(color));
@@ -275,7 +283,9 @@ errno_t obj::parseShapeAttributes (Dp::Shape &shape, std::ifstream &ifs) {
   {
     std::string str;
     ifs >> str;
+#if defined(DP_DEBUG)
     std::cout << "===: " << str << std::endl;
+#endif
     if (ifs.eof()) break;
 
     parseShapeAttribute(str, shape, ifs);
@@ -301,7 +311,9 @@ errno_t obj::composeShapeAttributes (Dp::Shape &shape, std::ofstream &ofs) {
 
 /* STL */
 errno_t obj::Stl::parse (std::ifstream &ifs) {
+#if defined(DP_DEBUG)
   std::cout << ">>>: Shape STL\n";
+#endif
 
   //auto shape = std::make_shared<Stl>();
   ifs >> filename_;
@@ -322,7 +334,9 @@ errno_t obj::Stl::compose   (std::ofstream &ofs) {
 
 /* Compound */
 errno_t obj::Compound::parse (std::ifstream &ifs) {
+#if defined(DP_DEBUG)
   std::cout << ">>>: Shape Compound\n";
+#endif
 
   std::string str;
   ifs >> str;
@@ -402,7 +416,9 @@ errno_t obj::Compound::compose   (std::ofstream &ofs) {
 
 /* Sphere */
 errno_t obj::Sphere::parse (std::ifstream &ifs) {
+#if defined(DP_DEBUG)
   std::cout << ">>>: Shape Sphere\n";
+#endif
 
   //auto shape = std::make_shared<Sphere>();
   ifs >> radius_;
@@ -423,7 +439,9 @@ errno_t obj::Sphere::compose   (std::ofstream &ofs) {
 
 /* Cylinder */
 errno_t obj::Cylinder::parse (std::ifstream &ifs) {
+#if defined(DP_DEBUG)
   std::cout << ">>>: Shape Cylinder\n";
+#endif
 
   //auto shape = std::make_shared<Cylinder>();
   ifs >> radius_;
@@ -446,7 +464,9 @@ errno_t obj::Cylinder::compose   (std::ofstream &ofs) {
 
 /* Rectangular */
 errno_t obj::Rectangular::parse (std::ifstream &ifs) {
+#if defined(DP_DEBUG)
   std::cout << ">>>: Shape Rectangular\n";
+#endif
 
   //auto shape = std::make_shared<Rectangular>();
   ifs >> width_;
@@ -471,7 +491,9 @@ errno_t obj::Rectangular::compose   (std::ofstream &ofs) {
 
 /* Cone */
 errno_t obj::Cone::parse (std::ifstream &ifs) {
+#if defined(DP_DEBUG)
   std::cout << ">>>: Shape Cone\n";
+#endif
 
   //auto shape = std::make_shared<Cone>();
   ifs >> radius_;

@@ -8,6 +8,7 @@
 
 #include <iostream>
 
+#include "dprint.h"
 #include "errchk.h"
 
 using Eigen::Vector3d;
@@ -45,7 +46,7 @@ public:
     Coordinates ans;
     ans.Pos() = parent.Pos() + parent.Rot() * pos;
     ans.Rot() =                parent.Rot() * rot;
-    //printf("%p %lf %lf %lf\n", this, ans.Pos()(0), ans.Pos()(1), ans.Pos()(2));
+    //PRINTF("%p %lf %lf %lf\n", this, ans.Pos()(0), ans.Pos()(1), ans.Pos()(2));
     return ans;
   }
 
