@@ -193,6 +193,50 @@ errno_t p4model_add_camera (void* inst, const char* lnk_name, camera_sensor *cam
   return EOK;
 }
 
+errno_t p4model_add_dummy_rotary_links (void* inst) {
+  EINVAL_CHECK(NULL, inst);
+
+  std::shared_ptr<Object> pobj = ((objdata*)inst)->obj;
+
+  size_t nol = pobj->NumOfLinks();
+  for (size_t i = 1; i < nol; i++) {
+
+    auto lnk  = pobj->GetLink(i);
+    auto plnk = pobj->GetPLink(i);
+
+    /* handle only for rotary-joint */
+    /* TODO: should not use '<=' */
+    if (!(kRotaryX <= lnk.GetJoint().GetType() && lnk.GetJoint().GetType() <= kRotaryU)) {
+      continue;
+    }
+
+    auto kSenserFooter = "_SENS";
+    auto kLinkExt      = ".lnk";
+    
+    auto jname = lnk.GetJoint().GetName() + kSenserFooter;
+    auto lname = lnk.GetName()            + kSenserFooter;
+
+    auto cjoint = std::dynamic_pointer_cast<RotaryJoint>(lnk.GetPJoint());
+    if (cjoint.use_count() == 0) {
+      return -11;
+    }
+
+    auto joint = RotaryJoint::Create(jname.c_str(), cjoint->Axis());
+    joint->SetRange(0, -Dp::Math::PI, Dp::Math::PI);
+    auto inode = Link::Create(lname.c_str(), joint, (Vector3d){0.0, 0.0, 0.0}, 0, (Vector3d){0.0,0.0,0.0}, Matrix3d::Zero());
+    auto filepath  = lnk.GetFilePath();
+    auto filepath2 = filepath.substr(0, filepath.rfind(kLinkExt)) + kSenserFooter + kLinkExt;
+    inode->SetFilePath(filepath2);
+
+    plnk->GetParent()->InsertChild(inode, plnk);
+  }
+
+  pobj->Setup();
+  nol = pobj->NumOfLinks();
+
+  return EOK;
+}
+
 errno_t p4model_saveas (void* inst, const char* respath) {
   EINVAL_CHECK(NULL, inst);
   EINVAL_CHECK(NULL, respath);

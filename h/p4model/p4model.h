@@ -47,6 +47,7 @@ typedef struct {
 } camera_sensor;
 
 errno_t p4model_add_camera(void* inst, const char *lnk_name, camera_sensor *param);
+errno_t p4model_add_dummy_rotary_links (void* inst);
 
 #ifdef __cplusplus
 };

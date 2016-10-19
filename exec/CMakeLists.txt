@@ -29,10 +29,14 @@ file(GLOB SRCS "${PROJECT_SOURCE_DIR}/p4model_add_sensor.c")
 add_executable(p4model_add_sensor ${SRCS})
 target_link_libraries(p4model_add_sensor p4model ${DEPENDENCIES})
 
+file(GLOB SRCS "${PROJECT_SOURCE_DIR}/p4model_add_dummy_rotary_links.c")
+add_executable(p4model_add_dummy_rotary_links ${SRCS})
+target_link_libraries(p4model_add_dummy_rotary_links p4model ${DEPENDENCIES})
+
 if(${UNIX})
-    install(TARGETS p4model_chg p4model_add_sensor RUNTIME DESTINATION bin)
+    install(TARGETS p4model_chg p4model_add_sensor p4model_add_dummy_rotary_links RUNTIME DESTINATION bin)
 elseif(${MINGW})
     #install(FILES "hook/bell/actual_arm/ihook.txt" DESTINATION ${INSTALL_DIR})
-    install(TARGETS p4model_chg p4model_add_sensor RUNTIME DESTINATION ${INSTALL_DIR})
+    install(TARGETS p4model_chg p4model_add_sensor p4model_add_dummy_rotary_links RUNTIME DESTINATION ${INSTALL_DIR})
 endif()
 

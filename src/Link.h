@@ -144,9 +144,10 @@ public:
     return sensors_;
   }
 
-  //std::shared_ptr<Joint> GetJoint() {
-  //  return joint_;
-  //}
+  std::shared_ptr<Joint> GetPJoint() {
+    return joint_;
+  }
+
   Joint& GetJoint() {
     return *(joint_);
   }
@@ -186,7 +187,7 @@ public:
   Eigen::Vector3d& LTipPos() {
     return l_tippos_;
   }
-  void SetTipRpy (Eigen::Vector3d &rpy) {
+  void SetTipRpy (const Eigen::Vector3d &rpy) {
     l_tiprpy_ = rpy;
     l_tiprot_ = Dp::Math::rpy2mat3(rpy);
   }
@@ -221,6 +222,40 @@ public:
 
     clink->SetParent(this);
     clinks_.push_back(clink);
+
+    return 0;
+  }
+
+  // AddChild (std::shared_ptr<CasCoords> node) {
+  //  node->SetParent(this->shared_from_this());
+  //  cnodes.push_back(node);
+  //}
+
+  errno_t RemoveChild (std::shared_ptr<Link> clink) {
+    CasCoords::RemoveChild(clink);
+
+    clinks_.remove(clink);
+    clink->SetParent(clink.get());
+
+    return 0;
+  }
+
+  /*
+   * before : this ------------> link
+   * after  : this --> ilink --> link
+   */
+  errno_t InsertChild (std::shared_ptr<Link> ilink, std::shared_ptr<Link> link) {
+
+    RemoveChild(link);
+    ilink->AddChild(link);
+
+    ilink->LTipPos() = link->LTipPos();
+    link->LTipPos() = Eigen::Vector3d::Zero();
+
+    ilink->SetTipRpy(link->LTipRpy());
+    link->SetTipRpy(Eigen::Vector3d::Zero());
+ 
+    AddChild(ilink);
 
     return 0;
   }
@@ -335,6 +370,10 @@ public:
       vlinks_[idx] = link;
       idx++;
     }
+  }
+
+  std::shared_ptr<Link> GetPLink(size_t idx) {
+    return vlinks_[idx];
   }
 
   Link& GetLink(size_t idx) {

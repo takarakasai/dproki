@@ -105,8 +105,12 @@ errno_t ObjFileReader::ExportShapeFile (std::string &filepath, Dp::Shape &shape)
 
 errno_t ObjFileReader::composeLinkAttribute (std::ofstream &ofs, Link &link) {
   ofs << obj::RotaryAxis2Str(link.GetJoint().GetType()) << " " << link.GetName() << std::endl;
-  ofs << "Shape" << " " << Common::OutPathHead() + link.GetShapePath() << std::endl;
-  ofs << "Hull"  << " " << Common::OutPathHead() + link.GetHullPath()  << std::endl;
+  if (link.GetShapePath().size() > 0) {
+    ofs << "Shape" << " " << Common::OutPathHead() + link.GetShapePath() << std::endl;
+  }
+  if (link.GetHullPath().size() > 0) {
+    ofs << "Hull"  << " " << Common::OutPathHead() + link.GetHullPath()  << std::endl;
+  }
   ofs << "Inertia" << std::endl;
   ofs << "     "   << link.GetMass()                 << std::endl;
   ofs << "     "   << link.GetCentroid().transpose() << std::endl;
@@ -300,10 +304,16 @@ errno_t ObjFileReader::Export (Object &obj) {
   ECALL(ExportObjectFile(obj));
   for (size_t i = 0; i < obj.NumOfLinks(); i++) {
     ECALL(ExportLinkFile(obj.GetLink(i)));
-    ECALL(ExportShapeFile(obj.GetLink(i).GetShapePath(), *(obj.GetLink(i).GetShape())));
-    // TODO: compare pointer and path
-    if (obj.GetLink(i).GetShapePath() != obj.GetLink(i).GetHullPath()) {
-      ECALL(ExportShapeFile(obj.GetLink(i).GetHullPath(), *(obj.GetLink(i).GetHull())));
+
+    if (obj.GetLink(i).GetShapePath().size() > 0) {
+      ECALL(ExportShapeFile(obj.GetLink(i).GetShapePath(), *(obj.GetLink(i).GetShape())));
+    }
+
+    if (obj.GetLink(i).GetHullPath().size() > 0) {
+      // TODO: compare pointer and path
+      if (obj.GetLink(i).GetShapePath() != obj.GetLink(i).GetHullPath()) {
+        ECALL(ExportShapeFile(obj.GetLink(i).GetHullPath(), *(obj.GetLink(i).GetHull())));
+      }
     }
   }
   return 0;

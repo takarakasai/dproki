@@ -72,7 +72,7 @@ private:
   Coordinates wcoords; /* world coordinates */
 
   std::weak_ptr<CasCoords> pnode;
-  std::list<std::weak_ptr<CasCoords>> cnodes;
+  std::list<std::shared_ptr<CasCoords>> cnodes;
 
 private:
   errno_t SetParent (std::weak_ptr<CasCoords> node) {
@@ -91,14 +91,30 @@ public:
     return pnode;
   }
 
-  std::list<std::weak_ptr<CasCoords>>& GetChilds () {
+  std::list<std::shared_ptr<CasCoords>>& GetChilds () {
     return cnodes;
   }
 
-  void AddChild (std::weak_ptr<CasCoords> node) {
-    node.lock()->SetParent(this->shared_from_this());
+  void AddChild (std::shared_ptr<CasCoords> node) {
+    node->SetParent(this->shared_from_this());
     cnodes.push_back(node);
   }
+
+  void RemoveChild (std::shared_ptr<CasCoords> node) {
+    cnodes.remove(node);
+    node->SetParent(node);
+  }
+
+  ///*
+  // * before : this ------------> node
+  // * after  : this --> inode --> node
+  // */
+  //void InsertChild (std::shared_ptr<CasCoords> inode, std::shared_ptr<CasCoords> node) {
+  //  RemoveChild(node);
+  //  inode->AddChild(node);
+  //  AddChild(inode);
+  //  std::cout << "--size:" << cnodes.size() << std::endl;
+  //}
 
   Vector3d& LPos() {
     return lcoords.Pos();
@@ -144,7 +160,7 @@ private:
     }
 
     for (auto& node : cnodes) {
-      node.lock()->update(this);
+      node->update(this);
     }
 
     return 0;
