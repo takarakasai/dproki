@@ -48,6 +48,9 @@ static const char* kP4CameraName    = "p4_camera";
 static const char* kP4LpDirectName  = "p4_endo_straight";
 static const char* kP4LpObliqueName = "p4_endo_oblique";
 
+static const char* kSenserFooter = "_SENS";
+static const char* kLinkExt      = ".lnk";
+ 
 static p4_slide_param* Name2SlideParam (std::string &name) {
   if (name == kP4CameraName) {
     return g_p4_camera;
@@ -210,9 +213,7 @@ errno_t p4model_add_dummy_rotary_links (void* inst) {
       continue;
     }
 
-    auto kSenserFooter = "_SENS";
-    auto kLinkExt      = ".lnk";
-    
+   
     auto jname = lnk.GetJoint().GetName() + kSenserFooter;
     auto lname = lnk.GetName()            + kSenserFooter;
 
@@ -231,6 +232,8 @@ errno_t p4model_add_dummy_rotary_links (void* inst) {
     plnk->GetParent()->InsertChild(inode, plnk);
   }
 
+  auto name = pobj->GetName() + kSenserFooter;
+  pobj->SetName(name);
   pobj->Setup();
   nol = pobj->NumOfLinks();
 
