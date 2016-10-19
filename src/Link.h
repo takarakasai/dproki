@@ -380,6 +380,7 @@ public:
     return *(vlinks_[idx]);
   }
 
+  void SetName (std::string &name) { name_ = name;}
   std::string& GetName() {
     return name_;
   }
