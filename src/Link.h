@@ -126,7 +126,7 @@ public:
   void SetInertia(Matrix3d inertia) {
     cinertia_ = inertia;
   }
-  Matrix3d& GetIntertia() {
+  Matrix3d& GetInertia() {
     return cinertia_;
   }
 

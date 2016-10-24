@@ -72,7 +72,7 @@ public:
   void SetInertia(size_t idx, Dp::Math::real val) {
     inertia_(idx) = val;
   }
-  Dp::Math::real GetIntertia(size_t idx) {
+  Dp::Math::real GetInertia(size_t idx) {
     return inertia_(idx);
   }
 
