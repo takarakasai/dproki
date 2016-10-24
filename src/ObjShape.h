@@ -43,7 +43,7 @@ namespace obj {
 
   errno_t parseChild (std::ifstream &ifs, Link &link);
 
-  errno_t parseLinkAttribute (std::string &attr_type, std::ifstream &ifs, Link &link, bool parse_childs);
+  errno_t parseLinkAttribute (std::string &attr_type, std::ifstream &ifs, Link &link, ssize_t max_childs);
 }
 
 /* Shape classes for obj format */

@@ -172,7 +172,7 @@ namespace obj {
       return 0;
   }
 
-  errno_t parseChild (std::ifstream &ifs, Link &link, bool import_childs) {
+  errno_t parseChild (std::ifstream &ifs, Link &link, ssize max_childs) {
 
       std::string file;
       ifs >> file;
@@ -191,10 +191,10 @@ namespace obj {
                 << " rpy = " << rpy(0)  << "," << rpy(1) << "," << rpy(2) << "\n\n\n";
 #endif
 
-      if (import_childs) {
+      if (max_childs > 0 || max_childs == -1) {
           /* TODO: LTipRot, TipPos */
           std::string path = file;
-          auto clink = ObjFileReader::ImportLinkFile(path, true);
+          auto clink = ObjFileReader::ImportLinkFile(path, (max_childs == -1) ? (max_childs) : (max_childs - 1));
           if (!clink) {
             return -1;
           }
@@ -229,11 +229,11 @@ namespace obj {
       return 0;
   }
 
-  errno_t parseLinkAttribute (std::string &attr_type, std::ifstream &ifs, Link &link, bool import_childs) {
+  errno_t parseLinkAttribute (std::string &attr_type, std::ifstream &ifs, Link &link, size_t max_childs) {
       static const std::unordered_map<std::string, std::function<errno_t(std::ifstream&, Link&)>> cases = {
         {"Shape"         , [](std::ifstream &ifs, Link &link){return parseShape(ifs, link);               }},
         {"Hull"          , [](std::ifstream &ifs, Link &link){return parseHull(ifs, link);                }},
-        {"Child"         , [=](std::ifstream &ifs, Link &link){return parseChild(ifs, link, import_childs);}},
+        {"Child"         , [=](std::ifstream &ifs, Link &link){return parseChild(ifs, link, max_childs);  }},
         {"Inertia"       , [](std::ifstream &ifs, Link &link){return parseLinkInfo(ifs, link);            }},
         {"JointInertia"  , [](std::ifstream &ifs, Link &link){return parseJointInertia(ifs, link);        }},
         {"JointViscosity", [](std::ifstream &ifs, Link &link){return parseJointViscosity(ifs, link);      }},

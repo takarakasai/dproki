@@ -163,12 +163,12 @@ errno_t ObjFileReader::composeObjectAttribute (std::ofstream &ofs, Object &obj) 
   return 0;
 }
 
-std::shared_ptr<Link> ObjFileReader::ImportLinkFile (std::string &dirpath, std::string &filepath, bool import_childs) {
+std::shared_ptr<Link> ObjFileReader::ImportLinkFile (std::string &dirpath, std::string &filepath, ssize_t max_childs) {
   Common::DirPath() = dirpath;
-  return ObjFileReader::ImportLinkFile(filepath, import_childs);
+  return ObjFileReader::ImportLinkFile(filepath, max_childs);
 }
  
-std::shared_ptr<Link> ObjFileReader::ImportLinkFile (std::string &filepath, bool import_childs) {
+std::shared_ptr<Link> ObjFileReader::ImportLinkFile (std::string &filepath, ssize_t max_childs) {
   std::ifstream ifs(Common::DirPath() + filepath);
   if (!ifs.good()) {
     std::cout << "error import link:" << Common::DirPath() << "|" << filepath << "\n";
@@ -204,7 +204,7 @@ std::shared_ptr<Link> ObjFileReader::ImportLinkFile (std::string &filepath, bool
 #if defined(DP_DEBUG)
     std::cout << "--: " << Common::DirPath() << "|" << filepath << "  ---:" << str << ":" << ifs.eof() << ":" << std::endl;
 #endif
-    if (obj::parseLinkAttribute(str, ifs, *link, import_childs) != 0) {
+    if (obj::parseLinkAttribute(str, ifs, *link, max_childs) != 0) {
       return nullptr;
     }
   }
@@ -251,7 +251,7 @@ std::shared_ptr<Object> ObjFileReader::ImportObjFile(std::string &dirpath, std::
   /*              /file.name --> "/" */
   /* hoge/fuga/aho/file.name --> "hoge/fuga/aho/" */
   //std::string data_dir = root_file.substr(0, root_file.find_last_of("/") + 1);
-  auto link = ImportLinkFile(root_file, true);
+  auto link = ImportLinkFile(root_file, -1);
   if (link == NULL) {
     return NULL;
   }

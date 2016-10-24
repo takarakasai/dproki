@@ -48,8 +48,8 @@ public:
   static errno_t ExportShapeFile (std::string &filepath, Dp::Shape &shape);
 
   /* for link  -- Parser */
-  static std::shared_ptr<Link> ImportLinkFile (std::string &filepath, bool import_childs);
-  static std::shared_ptr<Link> ImportLinkFile (std::string &dirpath, std::string &filepath, bool import_childs);
+  static std::shared_ptr<Link> ImportLinkFile (std::string &filepath, ssize_t max_childs);
+  static std::shared_ptr<Link> ImportLinkFile (std::string &dirpath, std::string &filepath, ssize_t max_childs);
   static std::shared_ptr<Object> ImportObjFile(std::string &dirpath, std::string &filepath);
 
   /* for link  -- Composer */
