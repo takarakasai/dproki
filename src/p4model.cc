@@ -23,6 +23,16 @@ static const std::string kSlideLinkParentName = "ELBOW_PITCH";
 static const std::string kSlideLinkName       = "ELBOW_SLIDE";
 static const std::string kRotateLinkName      = "WRIST_PITCH";
 
+static const char* p4arm_length2link_hooter (P4ARM_LENGTH length) {
+  switch (length) {
+    case P4ARM_SHORT:  return "_SHORT";
+    case P4ARM_MIDDLE: return "_MIDDLE";
+    case P4ARM_LONG:   return "_LONG";
+    default:           return nullptr;
+  }
+}
+
+#if 0
 p4_slide_param g_p4_camera[] = {
                  /* length      gpos(x)       gpos(y)      gpos(y)        Ixx           Iyy           Izz            Iyx           Izy            Izx       */
   /*P4ARM_SHORT */ {0.000, {0.00000000000, -0.000000000, 0.000000000}, 0.0000000000, 0.0000000000, 0.0000000000, 0.00000000000, 0.00000000000, 0.00000000000},
@@ -43,14 +53,18 @@ p4_slide_param g_p4_lp_oblique[] = {
   /*P4ARM_MIDDLE*/ {0.000, {0.00000000000, -0.000000000, 0.000000000}, 0.0000000000, 0.0000000000, 0.0000000000, 0.00000000000, 0.00000000000, 0.00000000000},
   /*P4ARM_LONG  */ {0.000, {0.00000000000, -0.000000000, 0.000000000}, 0.0000000000, 0.0000000000, 0.0000000000, 0.00000000000, 0.00000000000, 0.00000000000}
 };
+#endif
 
+#if 0
 static const char* kP4CameraName    = "p4_camera";
 static const char* kP4LpDirectName  = "p4_endo_straight";
 static const char* kP4LpObliqueName = "p4_endo_oblique";
+#endif
 
 static const char* kSenserFooter = "_SENS";
 static const char* kLinkExt      = ".lnk";
  
+#if 0
 static p4_slide_param* Name2SlideParam (std::string &name) {
   if (name == kP4CameraName) {
     return g_p4_camera;
@@ -62,6 +76,7 @@ static p4_slide_param* Name2SlideParam (std::string &name) {
     return nullptr;
   }
 }
+#endif
 
 // [mm], [gmm^2]
 // short 
@@ -83,23 +98,29 @@ static p4_slide_param* Name2SlideParam (std::string &name) {
 //Izx Izy Izz  7.8900183e+05 -4.0942656e+04  7.3182862e+05 -> Izx: 7.8900183e-04 Izy:-4.0942656e-05 Izz: 0.0073182862
 
 typedef struct {
+  std::string dir;
+  std::string root_file;
+ 
   std::shared_ptr<Object> obj;
 } objdata;
 
 errno_t p4model_open (void** inst, const char* resdir, const char* filepath) {
   EINVAL_CHECK(NULL, inst);
 
-  std::string dir(resdir);
-  std::string file(filepath);
-  std::shared_ptr<Object> obj = ObjFileReader::ImportObjFile(dir, file);
-  if (obj == nullptr) return -1;
+  objdata *p = new objdata();
+
+  p->dir  = resdir;
+  p->root_file = filepath;
+  std::shared_ptr<Object> obj = ObjFileReader::ImportObjFile(p->dir, p->root_file);
+  if (obj == nullptr) {
+    delete p;
+    return -1;
+  }
   obj->Setup();
   obj->UpdateCasCoords();
 
-  objdata *p = new objdata();
   p->obj = obj;
   *inst = (void*)p;
-  //*inst = (void*)(obj.get());
 
   return EOK;
 }
@@ -113,16 +134,34 @@ errno_t p4model_change_model (void* inst, P4ARM_LENGTH length, double wrist_pitc
   EINVAL_CHECK(NULL, inst);
   EINVAL_GELE_CHECK(P4ARM_MIN, length, P4ARM_MAX);
 
-  std::shared_ptr<Object> pobj = ((objdata*)inst)->obj;
+  objdata* odata = (objdata*)inst;
+  std::shared_ptr<Object> pobj = odata->obj;
 
-  std::string name(pobj->GetName().c_str());
-  p4_slide_param* param = Name2SlideParam(name);
+  std::string robot_name(pobj->GetName().c_str());
+#if 0
+  p4_slide_param* param = Name2SlideParam(robot_name);
   if (param == nullptr) {
     return -1;
   }
+#endif
 
   /** link parameter **/
   /* SLIDE LINK centroid/inertia */
+#if 1
+  const char* hooter = p4arm_length2link_hooter(length);
+  EINVAL_CHECK(nullptr, hooter);
+  /*                  ex : /obj/p4_endo_straight/ELBOW_PITCH_LONG.lnk */
+  std::string link_file = "/obj/" + robot_name + "/" + kSlideLinkParentName + hooter + ".lnk";
+  std::shared_ptr<Link> link_from = ObjFileReader::ImportLinkFile(link_file, 1);
+  if (link_from == nullptr) return -2;
+
+  auto link_to = pobj->FindLink(kSlideLinkParentName);
+  if (link_to == nullptr) return -3;
+
+  link_to->SetCentroid(link_from->GetCentroid());
+  link_to->SetInertia(link_from->GetInertia());
+
+#else
   auto link = pobj->FindLink(kSlideLinkParentName);
   if (link == nullptr) return -2;
 
@@ -133,16 +172,27 @@ errno_t p4model_change_model (void* inst, P4ARM_LENGTH length, double wrist_pitc
              param[length].Iyx, param[length].Iyy, param[length].Izy,
              param[length].Izx, param[length].Izy, param[length].Izz;
   link->SetInertia(inertia);
+#endif
 
   /* SLIDE LINK value */
+#if 1
+  auto slide_link_from = link_from->FindLink(link_from, kSlideLinkName);
+  if (slide_link_from == nullptr) return -4;
+
+  auto slide_link_to = pobj->FindLink(kSlideLinkName);
+  if (slide_link_to == nullptr) return -5;
+
+  slide_link_to->LTipPos()(2) = slide_link_from->LTipPos()(2);
+#else
   auto slide_link = pobj->FindLink(kSlideLinkName);
   if (slide_link == nullptr) return -3;
 
   slide_link->LTipPos()(2) = param[length].length;
+#endif
 
   /* ROTATE LINK value */
   auto rotate_link = pobj->FindLink(kRotateLinkName);
-  if (rotate_link == nullptr) return -4;
+  if (rotate_link == nullptr) return -6;
 
   rotate_link->LTipRpy()(1) = wrist_pitch_value;
   //rotate_link->LTipRpy()(1) = Dp::Math::rad2deg(wrist_pitch_value);
@@ -150,18 +200,29 @@ errno_t p4model_change_model (void* inst, P4ARM_LENGTH length, double wrist_pitc
   // TODO: remove reinterpret_cast
   /** shape parameter **/
   /* SLIDE LINK */
+#if 1
+  std::cout << "TYPP:" << slide_link_to->GetShape()->Type() << std::endl;
+  auto shape = slide_link_to->GetShape();
+#else
   std::cout << "TYPP:" << slide_link->GetShape()->Type() << std::endl;
   auto shape = slide_link->GetShape();
+#endif
   if (shape->Type() != Dp::kShapeCompound) {
-    return -5;
+    return -7;
   }
   auto comp = reinterpret_cast<Dp::Compound*>(shape.get());
   auto childs = comp->GetChilds();
   for (auto &child : childs) {
     //std::cout << "t: " << child.filepath;
-    if (child.filepath == "/obj/p4_endo_straight/ELBOW_SLIDEBodyFace2.shp") {
+    std::string shape_file = "/obj/" + robot_name + "/" + kSlideLinkName + "BodyFace2" + ".shp";
+    if (child.filepath == shape_file) {
+    //if (child.filepath == "/obj/p4_endo_straight/ELBOW_SLIDEBodyFace2.shp") {
       auto rect = reinterpret_cast<Dp::Rectangular*>(child.shape.get());
+#if 1
+      rect->Height() = slide_link_to->LTipPos()(2);
+#else
       rect->Height() = param[length].length;
+#endif
     }
   }
 
