@@ -172,7 +172,7 @@ namespace obj {
       return 0;
   }
 
-  errno_t parseChild (std::ifstream &ifs, Link &link) {
+  errno_t parseChild (std::ifstream &ifs, Link &link, bool import_childs) {
 
       std::string file;
       ifs >> file;
@@ -191,19 +191,21 @@ namespace obj {
                 << " rpy = " << rpy(0)  << "," << rpy(1) << "," << rpy(2) << "\n\n\n";
 #endif
 
-      /* TODO: LTipRot, TipPos */
-      std::string path = file;
-      auto clink = ObjFileReader::ImportLinkFile(path);
-      if (!clink) {
-        return -1;
+      if (import_childs) {
+          /* TODO: LTipRot, TipPos */
+          std::string path = file;
+          auto clink = ObjFileReader::ImportLinkFile(path, true);
+          if (!clink) {
+            return -1;
+          }
+
+          clink->SetFilePath(file);
+
+          clink->LTipPos() = xyz;
+          //clink->LTipRot() = Dp::Math::rpy2mat3(rpy);
+          clink->SetTipRpy(rpy);
+          link.AddChild(clink);
       }
-
-      clink->SetFilePath(file);
-
-      clink->LTipPos() = xyz;
-      //clink->LTipRot() = Dp::Math::rpy2mat3(rpy);
-      clink->SetTipRpy(rpy);
-      link.AddChild(clink);
 
       return 0;
   }
@@ -227,16 +229,16 @@ namespace obj {
       return 0;
   }
 
-  errno_t parseLinkAttribute (std::string &attr_type, std::ifstream &ifs, Link &link) {
+  errno_t parseLinkAttribute (std::string &attr_type, std::ifstream &ifs, Link &link, bool import_childs) {
       static const std::unordered_map<std::string, std::function<errno_t(std::ifstream&, Link&)>> cases = {
-        {"Shape"         , [](std::ifstream &ifs, Link &link){return parseShape(ifs, link);         }},
-        {"Hull"          , [](std::ifstream &ifs, Link &link){return parseHull(ifs, link);          }},
-        {"Child"         , [](std::ifstream &ifs, Link &link){return parseChild(ifs, link);         }},
-        {"Inertia"       , [](std::ifstream &ifs, Link &link){return parseLinkInfo(ifs, link);      }},
-        {"JointInertia"  , [](std::ifstream &ifs, Link &link){return parseJointInertia(ifs, link);  }},
-        {"JointViscosity", [](std::ifstream &ifs, Link &link){return parseJointViscosity(ifs, link);}},
-        {"JointRange"    , [](std::ifstream &ifs, Link &link){return parseJointRange(ifs, link);    }},
-        {"Sensor"        , [](std::ifstream &ifs, Link &link){return parseSensor(ifs, link);        }}
+        {"Shape"         , [](std::ifstream &ifs, Link &link){return parseShape(ifs, link);               }},
+        {"Hull"          , [](std::ifstream &ifs, Link &link){return parseHull(ifs, link);                }},
+        {"Child"         , [=](std::ifstream &ifs, Link &link){return parseChild(ifs, link, import_childs);}},
+        {"Inertia"       , [](std::ifstream &ifs, Link &link){return parseLinkInfo(ifs, link);            }},
+        {"JointInertia"  , [](std::ifstream &ifs, Link &link){return parseJointInertia(ifs, link);        }},
+        {"JointViscosity", [](std::ifstream &ifs, Link &link){return parseJointViscosity(ifs, link);      }},
+        {"JointRange"    , [](std::ifstream &ifs, Link &link){return parseJointRange(ifs, link);          }},
+        {"Sensor"        , [](std::ifstream &ifs, Link &link){return parseSensor(ifs, link);              }}
       };
       //static const std::unordered_map<std::string, std::function<errno_t(std::ifstream&, Link&)>> cases = {
       //  {"JointInertia"  , parseJointInertia  },
