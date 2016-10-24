@@ -114,17 +114,17 @@ errno_t ObjFileReader::composeLinkAttribute (std::ofstream &ofs, Link &link) {
   ofs << "Inertia" << std::endl;
   ofs << "     "   << link.GetMass()                 << std::endl;
   ofs << "     "   << link.GetCentroid().transpose() << std::endl;
-  ofs << "     "   << link.GetIntertia()(0,0) << " "
-                   << link.GetIntertia()(1,1) << " "
-                   << link.GetIntertia()(2,2) << std::endl;
-  ofs << "     "   << link.GetIntertia()(1,0) << " "
-                   << link.GetIntertia()(2,1) << " "
-                   << link.GetIntertia()(2,0) << std::endl;
+  ofs << "     "   << link.GetInertia()(0,0) << " "
+                   << link.GetInertia()(1,1) << " "
+                   << link.GetInertia()(2,2) << std::endl;
+  ofs << "     "   << link.GetInertia()(1,0) << " "
+                   << link.GetInertia()(2,1) << " "
+                   << link.GetInertia()(2,0) << std::endl;
   // TODO: multiple attribute
   ofs << "JointRange" << " " << "0" << " "
                              << Dp::Math::rad2deg(link.GetJoint().GetMinRange(0)) << " "
                              << Dp::Math::rad2deg(link.GetJoint().GetMaxRange(0)) << std::endl;
-  ofs << "JointInertia"   << " " << "0" << " " << link.GetJoint().GetIntertia(0)  << std::endl;
+  ofs << "JointInertia"   << " " << "0" << " " << link.GetJoint().GetInertia(0)   << std::endl;
   ofs << "JointViscosity" << " " << "0" << " " << link.GetJoint().GetViscosity(0) << std::endl;
 
   auto clinks = link.GetChilds();

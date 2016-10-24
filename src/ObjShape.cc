@@ -172,7 +172,7 @@ namespace obj {
       return 0;
   }
 
-  errno_t parseChild (std::ifstream &ifs, Link &link, ssize max_childs) {
+  errno_t parseChild (std::ifstream &ifs, Link &link, ssize_t max_childs) {
 
       std::string file;
       ifs >> file;
@@ -229,7 +229,7 @@ namespace obj {
       return 0;
   }
 
-  errno_t parseLinkAttribute (std::string &attr_type, std::ifstream &ifs, Link &link, size_t max_childs) {
+  errno_t parseLinkAttribute (std::string &attr_type, std::ifstream &ifs, Link &link, ssize_t max_childs) {
       static const std::unordered_map<std::string, std::function<errno_t(std::ifstream&, Link&)>> cases = {
         {"Shape"         , [](std::ifstream &ifs, Link &link){return parseShape(ifs, link);               }},
         {"Hull"          , [](std::ifstream &ifs, Link &link){return parseHull(ifs, link);                }},
