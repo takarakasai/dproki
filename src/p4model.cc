@@ -170,6 +170,7 @@ errno_t p4model_change_model (void* inst, P4ARM_LENGTH length, double wrist_pitc
   auto link_to = pobj->FindLink(kSlideLinkParentName);
   if (link_to == nullptr) return -3;
 
+  link_to->SetMass(link_from->GetMass());
   link_to->SetCentroid(link_from->GetCentroid());
   link_to->SetInertia(link_from->GetInertia());
 
