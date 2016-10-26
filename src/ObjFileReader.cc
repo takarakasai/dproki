@@ -112,30 +112,30 @@ errno_t ObjFileReader::composeLinkAttribute (std::ofstream &ofs, Link &link) {
     ofs << "Hull"  << " " << Common::OutPathHead() + link.GetHullPath()  << std::endl;
   }
   ofs << "Inertia" << std::endl;
-  ofs << "     "   << link.GetMass()                 << std::endl;
-  ofs << "     "   << link.GetCentroid().transpose() << std::endl;
-  ofs << "     "   << link.GetInertia()(0,0) << " "
-                   << link.GetInertia()(1,1) << " "
-                   << link.GetInertia()(2,2) << std::endl;
-  ofs << "     "   << link.GetInertia()(1,0) << " "
-                   << link.GetInertia()(2,1) << " "
-                   << link.GetInertia()(2,0) << std::endl;
+  ofs << "     "   << std::showpoint << link.GetMass()                 << std::endl;
+  ofs << "     "   << std::showpoint << link.GetCentroid().transpose() << std::endl;
+  ofs << "     "   << std::showpoint << link.GetInertia()(0,0) << " "
+                   << std::showpoint << link.GetInertia()(1,1) << " "
+                   << std::showpoint << link.GetInertia()(2,2) << std::endl;
+  ofs << "     "   << std::showpoint << link.GetInertia()(1,0) << " "
+                   << std::showpoint << link.GetInertia()(2,1) << " "
+                   << std::showpoint << link.GetInertia()(2,0) << std::endl;
   // TODO: multiple attribute
   ofs << "JointRange" << " " << "0" << " "
-                             << Dp::Math::rad2deg(link.GetJoint().GetMinRange(0)) << " "
-                             << Dp::Math::rad2deg(link.GetJoint().GetMaxRange(0)) << std::endl;
-  ofs << "JointInertia"   << " " << "0" << " " << link.GetJoint().GetInertia(0)   << std::endl;
-  ofs << "JointViscosity" << " " << "0" << " " << link.GetJoint().GetViscosity(0) << std::endl;
+                             << std::showpoint << Dp::Math::rad2deg(link.GetJoint().GetMinRange(0)) << " "
+                             << std::showpoint << Dp::Math::rad2deg(link.GetJoint().GetMaxRange(0)) << std::endl;
+  ofs << "JointInertia"   << " " << "0" << " " << std::showpoint << link.GetJoint().GetInertia(0)   << std::endl;
+  ofs << "JointViscosity" << " " << "0" << " " << std::showpoint << link.GetJoint().GetViscosity(0) << std::endl;
 
   auto clinks = link.GetChilds();
   for (auto &clink : clinks) {
       ofs << "Child" << " " << Common::OutPathHead() + clink->GetFilePath() << " "
-                            << clink->LTipPos()(0)  << " " 
-                            << clink->LTipPos()(1)  << " " 
-                            << clink->LTipPos()(2)  << " " 
-                            << clink->LTipRpy()(0)  << " " 
-                            << clink->LTipRpy()(1)  << " " 
-                            << clink->LTipRpy()(2)  << std::endl;
+                            << std::showpoint << clink->LTipPos()(0)  << " " 
+                            << std::showpoint << clink->LTipPos()(1)  << " " 
+                            << std::showpoint << clink->LTipPos()(2)  << " " 
+                            << std::showpoint << clink->LTipRpy()(0)  << " " 
+                            << std::showpoint << clink->LTipRpy()(1)  << " " 
+                            << std::showpoint << clink->LTipRpy()(2)  << std::endl;
   }
 
   auto sensors = link.GetSensors();
