@@ -32,6 +32,18 @@ static const char* p4arm_length2link_hooter (P4ARM_LENGTH length) {
   }
 }
 
+const P4ARM_LENGTH p4arm_str2length (const char *str) {
+  if (str == NULL || strlen(str) != 1) {
+    return P4ARM_INVAL;
+  }
+  switch (str[0]) {
+    case 'S': return P4ARM_SHORT;
+    case 'M': return P4ARM_MIDDLE;
+    case 'L': return P4ARM_LONG;
+    default:  return P4ARM_INVAL;
+  }
+}
+
 #if 0
 p4_slide_param g_p4_camera[] = {
                  /* length      gpos(x)       gpos(y)      gpos(y)        Ixx           Iyy           Izz            Iyx           Izy            Izx       */
