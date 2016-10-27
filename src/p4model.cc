@@ -22,6 +22,7 @@ typedef struct {
 static const std::string kSlideLinkParentName = "ELBOW_PITCH";
 static const std::string kSlideLinkName       = "ELBOW_SLIDE";
 static const std::string kRotateLinkName      = "WRIST_PITCH";
+static const std::string kMINMAXLinkName      = "CAMERA_YAW";
 
 static const char* p4arm_length2link_hooter (P4ARM_LENGTH length) {
   switch (length) {
@@ -238,6 +239,29 @@ errno_t p4model_change_model (void* inst, P4ARM_LENGTH length, double wrist_pitc
 #endif
     }
   }
+
+  return EOK;
+}
+
+errno_t p4model_change_model_ex(void* inst, P4ARM_LENGTH length, double wrist_pitch_value/*[deg]*/, double camera_yaw_minmax[2]/*[deg]*/)
+{
+  /* ROTATE LINK */
+  /* SLIDE LINK  */
+  EFUNC(p4model_change_model(inst, length, wrist_pitch_value));
+
+  std::shared_ptr<Object> pobj = ((objdata*)inst)->obj;
+
+  /* LINK min/max value */
+  auto minmax_link = pobj->FindLink(kMINMAXLinkName);
+  if (minmax_link == nullptr) {
+    return -10;
+  }
+
+  /* can not use following code, auto is evaluated as Joint not Joint& in this case.
+   * auto joint = ***
+   */
+  Joint& joint = minmax_link->GetJoint();
+  joint.SetRange(0, Dp::Math::deg2rad(camera_yaw_minmax[0]), Dp::Math::deg2rad(camera_yaw_minmax[1]));
 
   return EOK;
 }

@@ -159,6 +159,12 @@ errno_t ObjFileReader::composeObjectAttribute (std::ofstream &ofs, Object &obj) 
       ofs << "InitJointValue" << " " << obj.GetLink(i).GetName() << " " << ovalue << std::endl;
     }
   }
+  for (auto &apair: obj.GetAssocPair()) {
+    ofs << "AssocPair";
+    ofs << " " << apair->link1_->GetName() << " " << apair->idx1_ << " " << apair->scale1_;
+    ofs << " " << apair->link2_->GetName() << " " << apair->idx2_ << " " << apair->scale2_;
+    ofs << std::endl;
+  }
 
   return 0;
 }
@@ -277,9 +283,24 @@ std::shared_ptr<Object> ObjFileReader::ImportObjFile(std::string &dirpath, std::
           //joint->SetValue(link_val);
           joint->SetOffsetValue(link_val);
         }
-        //node2->GetJoint().SetValue(-rad + Dp::Math::deg2rad(-120));
-        /* TODO: SET */
-        //std::cout << link_name << ":" << link_val << std::endl;
+      } else if (tmp == "AssocPair") {
+        std::string link_name;
+        size_t idx1, idx2;
+        Dp::Math::real scale1, scale2;
+
+        stream >> link_name;
+        auto link1 = obj->FindLink(link_name);
+        stream >> idx1;
+        stream >> scale1;
+
+        stream >> link_name;
+        auto link2 = obj->FindLink(link_name);
+        stream >> idx2;
+        stream >> scale2;
+
+        if (link1 && link2) {
+          obj->AddAssocPair(link1, idx1, scale1, link2, idx2, scale2);
+        }
       }
     }
   }

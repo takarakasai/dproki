@@ -3,6 +3,7 @@
 #define LINK_H
 
 #include <list>
+#include <vector>
 #include <string>
 
 #include <memory>
@@ -307,6 +308,18 @@ public:
 
 };
 
+struct LinkAssocPair {
+  std::shared_ptr<Link> link1_, link2_;
+  size_t idx1_, idx2_;
+  Dp::Math::real scale1_, scale2_;
+
+  LinkAssocPair(
+    std::shared_ptr<Link> link1, size_t idx1, Dp::Math::real scale1,
+    std::shared_ptr<Link> link2, size_t idx2, Dp::Math::real scale2)
+      : link1_(link1), link2_(link2), idx1_(idx1), idx2_(idx2), scale1_(scale1), scale2_(scale2){};
+
+};
+
 class Object {
 private:
   std::string name_;
@@ -315,6 +328,8 @@ private:
   std::shared_ptr<Link> rlink_;       /* root link */
   std::list<std::shared_ptr<Link>> llinks_;
   std::vector<std::shared_ptr<Link>> vlinks_;
+
+  std::list<std::shared_ptr<LinkAssocPair>> apair_;
 
 protected:
 
@@ -390,6 +405,16 @@ public:
   }
   std::string& GetFilePath () {
     return filepath_;
+  }
+
+  void AddAssocPair (
+    std::shared_ptr<Link> link1, size_t idx1, Dp::Math::real scale1,
+    std::shared_ptr<Link> link2, size_t idx2, Dp::Math::real scale2) {
+      auto pair = std::make_shared<LinkAssocPair>(link1, idx1, scale1, link2, idx2, scale2);
+      apair_.push_back(pair);
+  }
+  std::list<std::shared_ptr<LinkAssocPair>> GetAssocPair() {
+    return apair_;
   }
 
 };

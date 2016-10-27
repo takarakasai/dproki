@@ -14,6 +14,7 @@ include_directories(
   ${p4model_SOURCE_DIR}/h/p4model
 )
 
+list(APPEND DEPENDENCIES mfoundation)
 if(${XENOMAI})
   list(APPEND DEPENDENCIES ${XENO_DEPENDENCIES})
 endif()
