@@ -1,0 +1,6 @@
+Compound {
+    /obj/eV/ARM_BODY.shp 0.00 0 0 0 90  0
+    /obj/eV/ARM_LINK.shp 0.06 0 0 0  0 90
+    /obj/eV/ARM_MASS.shp 0.12 0 0 0  0  0
+}
+Inertia Auto

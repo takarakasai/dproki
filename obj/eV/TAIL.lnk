@@ -1,0 +1,9 @@
+RotaryLinkY TAIL_PITCH
+Shape /obj/eV/TAIL.shp
+Hull /obj/eV/TAIL.shp
+Inertia
+    0.100
+    -0.16622 -0.000050 -0.08492
+    1.678E-04 2.790E-04 1.209E-04
+    0.0 0.0 0.0
+JointRange 0 -90.0 90.0

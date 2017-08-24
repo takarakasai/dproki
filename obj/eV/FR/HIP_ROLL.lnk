@@ -1,12 +1,12 @@
-RotaryLinkZ FR/HIP_YAW
-Shape /obj/eV/FR/HIP_YAW.shp
-Hull /obj/eV/FR/HIP_YAW.shp
+RotaryLinkX FR/HIP_ROLL
+Shape /obj/eV/FR/HIP_ROLL.shp
+Hull /obj/eV/FR/HIP_ROLL.shp
 Inertia
      0.075
      0.0 0.0 0.0
      0.075 0.075 0.075
      0.0 0.0 0.0
-JointRange 0 -180.0 180.0
+JointRange 0 -60.0 60.0
 JointInertia 0 0
 JointViscosity 0 0
 

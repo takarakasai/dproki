@@ -1,13 +1,15 @@
 Base Base
-Shape /obj/eV/Base.shp
-Hull /obj/eV/Base.shp
+Shape /obj/eV/BASE.shp
+Hull /obj/eV/BASE.shp
 Inertia
-    0.0800
-    0.0 0.0 0.0
-    0.0800 0.0800 0.0800
+    2.194
+    0.02628 0.009560 0.06888
+    0.8543E-02 1.763E-02 2.460E-02
     0.0 0.0 0.0
 
-Child /obj/eV/FR/HIP_YAW.lnk +0.110 -0.080 0.0 0.0 0.0 0.0
-Child /obj/eV/FL/HIP_YAW.lnk +0.110 +0.080 0.0 0.0 0.0 0.0
-Child /obj/eV/BR/HIP_YAW.lnk -0.110 -0.080 0.0 0.0 0.0 0.0
-Child /obj/eV/BL/HIP_YAW.lnk -0.110 +0.080 0.0 0.0 0.0 0.0
+Child /obj/eV/FR/HIP_ROLL.lnk +0.172   -0.080 0.0000 0.0 0.0 0.0
+Child /obj/eV/FL/HIP_ROLL.lnk +0.172   +0.080 0.0000 0.0 0.0 0.0
+Child /obj/eV/BR/HIP_ROLL.lnk -0.068   -0.080 0.0000 0.0 0.0 0.0
+Child /obj/eV/BL/HIP_ROLL.lnk -0.068   +0.080 0.0000 0.0 0.0 0.0
+Child /obj/eV/ARM.lnk          0.204    0.0   0.0582 0.0 0.0 0.0
+Child /obj/eV/TAIL.lnk        -0.10855  0.0   0.0531 0.0 0.0 0.0

@@ -1,0 +1,6 @@
+Compound {
+    /obj/eV/TAIL_BODY.shp  0.00 0 0  0 90  0
+    /obj/eV/TAIL_LINK.shp -0.10 0 0  0  0 90
+    /obj/eV/TAIL_MASS.shp -0.20 0 0  0  0  0
+}
+Inertia Auto

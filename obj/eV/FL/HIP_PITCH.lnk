@@ -6,8 +6,8 @@ Inertia
      0.0 0.0 0.05
      0.075 0.075 0.075
      0.0 0.0 0.0
-JointRange 0 -180.0 180.0
+JointRange 0 -60.0 60.0
 JointInertia 0 0
 JointViscosity 0 0
 
-Child /obj/eV/FL/KNEE_PITCH.lnk 0.0 0.0 0.10 0.0 0.0 0.0
+Child /obj/eV/FL/KNEE_PITCH.lnk 0.0 0.0 -0.10 0.0 0.0 0.0

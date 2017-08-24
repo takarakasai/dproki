@@ -1,0 +1,11 @@
+RotaryLinkY ARM_PITCH
+Shape /obj/eV/ARM.shp
+Hull /obj/eV/ARM.shp
+Inertia
+    0.231
+    0.2976 0.001 0.09093
+    2.264E-04 4.162E-04 3.384E-04
+    0.0 0.0 0.0
+JointRange 0 -90.0 0.0
+JointInertia 0 0
+JointViscosity 0 0

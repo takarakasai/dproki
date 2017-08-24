@@ -1,0 +1,5 @@
+Compound {
+    /obj/eV/BASE_BODY.shp      0.055 0 0.03 0 0 0
+    /obj/eV/BASE_BODY_MASS.shp 0.000 0 0.00 0 0 0
+}
+Inertia Auto
