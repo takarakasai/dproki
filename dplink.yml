@@ -1,0 +1,7 @@
+project : dproki
+type    : lib
+depends : 
+ - url : git@github.com:takarakasai/dpcommon.git
+   branch : master
+   options :
+ 
