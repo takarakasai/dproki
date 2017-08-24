@@ -1,6 +1,0 @@
-project : p4model
-depends : 
- - url : git@jps00006719.jp.sony.com:bell/mfoundation.git
-   branch : develop
-   options :
- 

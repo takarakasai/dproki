@@ -1,45 +1,56 @@
+cmake_minimum_required(VERSION 2.8.4)
 
-cmake_minimum_required(VERSION 2.8)
+project(dproki)
 
-project(p4model)
+include("dplink.cmake" OPTIONAL)
 
-#if(APPLE)
-#set(CMAKE_CXX_COMPILER /usr/bin/clang++)
-#else()
-#set(CMAKE_CXX_COMPILER g++)
-#endif()
+# please add option() here
+# option(<VARIABLE> <DECSCRIPTION> <ON or OFF>)
+# if(VARIABLE)
+#   add_definitions(-DEXAMPLE)
+# endif()
 
-find_package(Eigen3 REQUIRED)
 
-#add_definitions(-std=c++11 -Wall -DdDOUBLE -O2 -g)
-if(${CMAKE_COMPILER_IS_GNUCC})
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O2 -std=gnu99")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O2 -std=c++11")
+## currently using target_include_directories
+#include_directories(${PROJECT_SOURCE_DIR}/h/
+#                   ${depend_prj_SOURCE_DIR}/h/
+#                    )
+
+file(GLOB SRCS "src/*.cc"
+#              "src/OWN_SOURCE_DIR/*.cc"
+   )
+
+if(WITH_GCOV)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
 endif()
 
+# add own dependencies
+#list(APPEND dproki_DEPENDENCIES "<$OWN_DEPENDENCIES>")
 
-include_directories(
-  ${PROJECT_SOURCE_DIR}/h/${PROJECT_NAME}
-  ${mfoundation_SOURCE_DIR}/h/mfoundation
-  #/usr/include/c++/4.8/
-  #/usr/include/x86_64-linux-gnu/c++/4.8/
-  .
-)
+add_library     (${PROJECT_NAME} SHARED ${SRCS})
 
-#add_definitions(-D_DEBUG)
+target_include_directories(
+  ${PROJECT_NAME} PUBLIC
+  ${PROJECT_SOURCE_DIR}/h
+  #$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/h>
+  #$<INSTALL_INTERFACE:h/${PROJECT_NAME}>
+  )
 
-file(GLOB CXXSRCS "${PROJECT_SOURCE_DIR}/src/*.cc")
-file(GLOB CSRCS "${PROJECT_SOURCE_DIR}/src/*.c")
+if(dproki_DEPENDENCIES)
+  add_dependencies(${PROJECT_NAME} ${dproki_DEPENDENCIES})
+  target_link_libraries(${PROJECT_NAME} ${dproki_DEPENDENCIES})
+endif()
 
-add_library (${PROJECT_NAME} SHARED ${CSRCS} ${CXXSRCS})
-
-add_subdirectory(exec)
 
 if(${UNIX})
-    install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib)
-    install(DIRECTORY ${PROJECT_SOURCE_DIR}/h/${PROJECT_NAME} DESTINATION include)
+  install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib)
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/h/${PROJECT_NAME} DESTINATION include)
 elseif(${MINGW})
-    install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${INSTALL_DIR})
+  install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${INSTALL_DIR})
 endif()
 
+option(TEST_${PROJECT_NAME} "test for ${PROJECT_NAME}" OFF)
+if(TEST_${PROJECT_NAME} OR TEST_ALL)
+  add_subdirectory(test)
+endif()
 
