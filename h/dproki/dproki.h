@@ -9,7 +9,7 @@
 #include "dproki/ObjSensor.h"
 #include "dproki/ObjFileReader.h"
 #include "dproki/InterfaceSceneObject.h"
-#include "dproki/DrawableLink.h"
+//#include "dproki/DrawableLink.h"
 #include "dproki/Link.h"
 
 //dproki/dprint.h

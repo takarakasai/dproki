@@ -3,7 +3,7 @@
 
 #include <list>
 
-#include "dp_type.h"
+#include "dpcommon/dp_type.h"
 
 #include "Link.h"
 #include "InterfaceSceneObject.h"

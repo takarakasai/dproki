@@ -5,6 +5,7 @@
 #include "dpcommon/dp_type.h"
 
 #include <memory>
+#include <list>
 
 namespace Dp {
   
