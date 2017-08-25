@@ -282,8 +282,10 @@ namespace Dp {
           stream >> link_val;
           auto joint = obj->FindJoint(link_name);
           if (joint) {
-            //joint->SetValue(link_val);
-            joint->SetOffsetValue(link_val);
+            // TODO: 
+            //  to be determined to set InitJointValue to link value or offset value
+            joint->SetValue(link_val);
+            //joint->SetOffsetValue(link_val);
           }
         } else if (tmp == "AssocPair") {
           std::string link_name;

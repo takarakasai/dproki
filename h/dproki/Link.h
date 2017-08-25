@@ -118,6 +118,12 @@ namespace Dp {
       wcentroid_ = WPos() + WRot() * centroid_;
       return wcentroid_;
     }
+
+    Vector3d GetWTipPos() {
+      /* TODO: update at UpdateCasCoords */
+      Vector3d wtippos = WPos() + WRot() * LTipPos();
+      return std::move(wtippos);
+    }
   
     /* affect all child's tippos w/o modifiying tippos of this link */
     void AddClinkOffset (Vector3d offset) {
@@ -321,6 +327,8 @@ namespace Dp {
         : link1_(link1), link2_(link2), idx1_(idx1), idx2_(idx2), scale1_(scale1), scale2_(scale2){};
   
   };
+
+  typedef std::vector<std::shared_ptr<Link>> Links;
   
   class Object {
   private:
@@ -344,6 +352,10 @@ namespace Dp {
     static std::shared_ptr<Object> Create (
       const char* name) {
       return std::make_shared<Object>(name);
+    }
+
+    Links& GetLinks() {
+      return vlinks_;
     }
   
     void SetRootLink (std::shared_ptr<Link> rlink) {

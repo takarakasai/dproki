@@ -18,10 +18,27 @@ int main(int argc, char *argv[]) {
   //std::string objpath = "obj/eV/eV.obj";
   std::string dirpath(argv[1]);
   std::string objpath(argv[2]);
+
   auto robot = Dp::ObjFileReader::ImportObjFile(dirpath, objpath);
   if (robot == NULL) {
     fprintf(stderr, "fail to load %s %s.\n", dirpath.c_str(), objpath.c_str());
     return 2;
+  }
+
+  robot->Setup();
+  robot->UpdateCasCoords();
+
+  auto lnks = robot->GetLinks();
+  std::cout << "size : " << lnks.size() << std::endl;
+  for (auto lnk : lnks) {
+    std::cout << " NAME : " << lnk->GetName() << std::endl;
+    Dp::Vector3d ltippos = lnk->LTipPos();
+    std::cout << "   ltippos: " << ltippos[0] << ", " << ltippos[1] << ", " << ltippos[2] << std::endl;
+    Dp::Vector3d wtippos = lnk->GetWTipPos();
+    std::cout << "   wtippos: " << wtippos[0] << ", " << wtippos[1] << ", " << wtippos[2] << std::endl;
+
+    Dp::Joint& jnt = lnk->GetJoint();
+    std::cout << "     joint: " << jnt.GetAngle() << " ( offset : " << jnt.GetOffsetAngle() << " )" << std::endl;
   }
  
   fprintf(stderr, "success to load %s %s.\n", dirpath.c_str(), objpath.c_str());
